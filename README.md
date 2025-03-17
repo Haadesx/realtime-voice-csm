@@ -272,10 +272,87 @@ This project is released under the MIT License. See the LICENSE file for details
 
 ## Version History
 
-- v1.0.0 - Initial release
-  - Basic voice interaction
-  - Web interface
-  - Real-time visualization
+### Current Release: v0.1.0-alpha.1
+
+This is a development release and is not intended for production use. Please report any bugs or issues through GitHub Issues.
+
+#### Semantic Versioning
+
+This project follows [Semantic Versioning 2.0.0](https://semver.org/):
+- **MAJOR** version (x.0.0) - Incompatible API changes
+- **MINOR** version (0.x.0) - Add functionality in a backward compatible manner
+- **PATCH** version (0.0.x) - Backward compatible bug fixes
+- **Pre-release** tags (alpha/beta/rc) - Development versions
+
+#### Release Tags
+- **alpha**: Early development, expect bugs and incomplete features
+- **beta**: Feature complete but may contain bugs
+- **rc**: Release candidates, final testing before stable release
+
+### Changelog
+
+#### v0.1.0-alpha.1 (Current)
+- 🎤 Initial implementation of voice interaction
+- 🌐 Basic web interface with audio visualization
+- 🤖 Integration with Dolphin3 model
+- 🗣️ Basic CSM voice synthesis
+- ⚡ Preliminary GPU support
+- 🐛 Known limitations:
+  - May experience audio latency
+  - Limited error handling
+  - GPU optimization needs improvement
+  - Web interface requires further testing
+
+### Development Roadmap
+
+#### v0.2.0-alpha (Planned)
+- [ ] Improved error handling
+- [ ] Better GPU optimization
+- [ ] Enhanced audio processing
+- [ ] Web interface refinements
+
+#### v0.3.0-beta (Planned)
+- [ ] Multi-language support
+- [ ] Custom voice cloning features
+- [ ] Comprehensive testing suite
+- [ ] Performance optimizations
+
+#### v1.0.0 (Future)
+- [ ] Production-ready release
+- [ ] Full documentation
+- [ ] Mobile interface
+- [ ] Docker support
+- [ ] Cloud deployment options
+
+## Development Status
+
+⚠️ **This is a Work in Development Release** ⚠️
+
+This software is currently in early development (alpha) stage. Users should be aware that:
+
+1. **Stability**: The software may be unstable and could contain bugs
+2. **Features**: Some features may be incomplete or subject to change
+3. **API**: The API may change without notice
+4. **Support**: Limited support available during alpha phase
+5. **Testing**: Not all features have been fully tested
+6. **Documentation**: Documentation may be incomplete or outdated
+
+### Testing and Feedback
+
+We encourage users to:
+1. Report bugs through GitHub Issues
+2. Suggest features through GitHub Discussions
+3. Contribute improvements via Pull Requests
+4. Join our testing community
+
+### Installation Note
+
+For development and testing purposes only. Not recommended for production environments.
+
+```bash
+# Clone the specific alpha release
+git clone -b v0.1.0-alpha.1 https://github.com/Haadesx/realtime-voice-csm.git
+```
 
 ## Future Plans
 
