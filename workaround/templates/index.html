@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Chat Visualizer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #1a1a1a;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            position: relative;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+        }
+
+        .visualizer-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .label {
+            position: absolute;
+            bottom: -40px;
+            color: #fff;
+            font-size: 1.2em;
+            text-align: center;
+            width: 100%;
+        }
+
+        .stop-button {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #ff4444;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+        }
+
+        .stop-button:hover {
+            background: #ff6666;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .stop-button::before {
+            content: '';
+            width: 30px;
+            height: 30px;
+            background: #fff;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .stop-button.recording::before {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .status {
+            position: absolute;
+            top: 20px;
+            color: #fff;
+            font-size: 1.2em;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="status" id="status">Press Start to begin conversation</div>
+    <div class="container">
+        <div class="visualizer-container">
+            <canvas id="inputVisualizer"></canvas>
+            <div class="label">Input</div>
+        </div>
+        <button class="stop-button" id="stopButton" aria-label="Toggle recording"></button>
+        <div class="visualizer-container">
+            <canvas id="outputVisualizer"></canvas>
+            <div class="label">Output</div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        class AudioVisualizer {
+            constructor(canvasId, color) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.color = color;
+                this.dataArray = new Uint8Array(128);
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+            }
+
+            resize() {
+                this.canvas.width = this.canvas.offsetWidth;
+                this.canvas.height = this.canvas.offsetHeight;
+                this.centerX = this.canvas.width / 2;
+                this.centerY = this.canvas.height / 2;
+                this.radius = Math.min(this.centerX, this.centerY) - 10;
+            }
+
+            update(audioData) {
+                if (!audioData) {
+                    audioData = new Uint8Array(128).fill(0);
+                }
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.ctx.beginPath();
+                this.ctx.strokeStyle = this.color;
+                this.ctx.lineWidth = 2;
+
+                for (let i = 0; i < audioData.length; i++) {
+                    const angle = (i / audioData.length) * Math.PI * 2;
+                    const amplitude = (audioData[i] / 255) * 50;
+                    const x = this.centerX + (this.radius + amplitude) * Math.cos(angle);
+                    const y = this.centerY + (this.radius + amplitude) * Math.sin(angle);
+
+                    if (i === 0) {
+                        this.ctx.moveTo(x, y);
+                    } else {
+                        this.ctx.lineTo(x, y);
+                    }
+                }
+
+                this.ctx.closePath();
+                this.ctx.stroke();
+            }
+        }
+
+        const socket = io();
+        const inputVisualizer = new AudioVisualizer('inputVisualizer', '#4CAF50');
+        const outputVisualizer = new AudioVisualizer('outputVisualizer', '#2196F3');
+        const stopButton = document.getElementById('stopButton');
+        const statusElement = document.getElementById('status');
+        let isRunning = false;
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        socket.on('audio_data', (data) => {
+            if (data.input) {
+                inputVisualizer.update(new Float32Array(data.input));
+            }
+            if (data.output) {
+                outputVisualizer.update(new Float32Array(data.output));
+            }
+        });
+
+        stopButton.addEventListener('click', () => {
+            isRunning = !isRunning;
+            if (isRunning) {
+                statusElement.textContent = 'Listening...';
+                socket.emit('start_recording');
+                stopButton.classList.add('recording');
+            } else {
+                statusElement.textContent = 'Press Start to begin conversation';
+                socket.emit('stop_recording');
+                stopButton.classList.remove('recording');
+                inputVisualizer.update(null);
+                outputVisualizer.update(null);
+            }
+        });
+    </script>
+</body>
+</html> 
