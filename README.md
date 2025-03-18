@@ -64,6 +64,61 @@ By using this code, you agree to:
    - Download from [ollama.ai](https://ollama.ai)
    - Required for running the Dolphin3 language model
 
+## Important Setup Note
+
+This project builds upon the official Sesame CSM repository. To set up properly:
+
+1. First, clone the official Sesame CSM repository:
+```bash
+git clone https://github.com/SesameAILabs/csm.git
+cd csm
+```
+
+2. Create and activate the virtual environment:
+```bash
+# Windows
+python -m venv .venv
+.venv\Scripts\activate
+
+# Linux/Mac
+python -m venv .venv
+source .venv/bin/activate
+```
+
+3. Install Sesame's requirements:
+```bash
+pip install -r requirements.txt
+```
+
+4. Install additional project requirements:
+```bash
+pip install flask flask-socketio sounddevice numpy
+```
+
+5. Clone this repository into the virtual environment:
+```bash
+git clone https://github.com/Haadesx/realtime-voice-csm.git
+cd realtime-voice-csm
+```
+
+6. Copy the interactive files:
+```bash
+cp csm/fast_chat.py /path/to/sesame/csm/.venv/
+cp csm/web_interface.py /path/to/sesame/csm/.venv/
+```
+
+7. Set up Hugging Face access:
+```bash
+huggingface-cli login
+```
+
+⚠️ **Note**: This project requires access to:
+- Sesame's CSM-1B model
+- Llama-3.2-1B model
+- A CUDA-compatible GPU (recommended)
+
+For more information about the base CSM model, visit [Sesame's CSM Repository](https://github.com/SesameAILabs/csm).
+
 ## Detailed Setup Instructions
 
 ### 1. Python Installation (Windows)
